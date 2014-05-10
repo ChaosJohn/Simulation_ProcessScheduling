@@ -73,7 +73,7 @@ display() {
   while(cursor != NULL) {
     /*printf("|%d\t|%s\t|%d\t|%d\t|%d\t |\n", cursor->pid, cursor->pname, cursor->priority, cursor->runtime, cursor->needtime); */
     printf("|%d\t|%d\t|%d\t|%d\t |\n", cursor->pid, cursor->priority, cursor->runtime, cursor->needtime); 
-   cursor = cursor->next;  
+    cursor = cursor->next;  
   }
   printHorizontalBar(); 
 }
@@ -135,13 +135,53 @@ run() {
 }
 
 
+/**
+ * 时间片轮转
+ */ 
+void 
+run2() {
+  PCBPointer head = pcbList; 
+  /*PCBPointer cursor; */
+  PCBPointer running; 
+  while (head->next != NULL) {
+    /*sortByPriority(); */
+    running = head->next;
+    printf("\n#=>第  %d  个进程正在运行第  %d  个时间片\n", running->pid, running->runtime); 
+    display();    
+    /*fflush(stdin); */
+    /*getchar(); */
+    sleep(1);
+    running->runtime++; 
+    /*changePriority(); */
+    if (running->runtime > running->needtime) {
+      head->next = head->next->next; 
+      printf("\n#=>第  %d  个进程已结束\n\n", running->pid); 
+    } else {
+      head->next = head->next->next; 
+      PCBPointer cursor = head; 
+      while(cursor->next != NULL) {
+        cursor = cursor->next; 
+      }
+      cursor->next = running; 
+      running->next = NULL; 
+    }
+  }
+}
+
 int 
 main(int argc, 
     char **argv) {
   int pcbSize = 0; 
+  int choose = 0; 
   printf("需要建立的进程个数: "); scanf("%d", &pcbSize); fflush(stdin); 
   inputWithPriority(pcbSize); 
-  run(); 
+  printf("[动态优先级调度-1]\n[时间片轮转-2]\n输入选择: "); 
+  scanf("%d", &choose); 
+  if (1 == choose) {
+    run(); 
+  } else if (2 == choose) {
+    run2(); 
+  }
   /*display(); */
   printf("#=>全部进程已结束\n"); 
 
