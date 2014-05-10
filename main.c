@@ -111,7 +111,9 @@ sortByPriority() {
   }
 }
 
-
+/*  
+ * 动态优先级调度
+ */
 void 
 run() {
   PCBPointer head = pcbList; 
